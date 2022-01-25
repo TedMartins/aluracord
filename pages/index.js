@@ -1,5 +1,6 @@
 import appConfig from '../config.json';
 import { Box, Button, Text, TextField, Image } from '@skynexui/components';
+import Head from 'next/head'
 
 function GlobalStyle() {
   return (
@@ -49,11 +50,15 @@ function Title(props) {
 export default function HomePage() {
   const username = 'TedMartins';
   const pagetitle = `AluraCord - ${username}`;
-  document.title = pagetitle;
 
   return (
     <>
       
+      <Head>
+        <title>{pagetitle}</title>
+        <meta property="og:title" content="My page title" key="title" />
+      </Head>
+
       <GlobalStyle />
       <Box
         styleSheet={{
