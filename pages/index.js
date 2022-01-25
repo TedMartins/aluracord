@@ -46,23 +46,14 @@ function Title(props) {
   );
 }
 
-// function HomePage() {
-//   return (
-//     <div>
-//       <GlobalStyle />
-//       <Title tag="h2">Boas vindas de volta!</Title>
-//       <h2>Discord - Alura Matrix</h2>
-//     </div>
-//   );
-// }
-
-// export default HomePage
-
 export default function HomePage() {
-  const username = 'tedmartins';
+  const username = 'TedMartins';
+  const pagetitle = `AluraCord - ${username}`;
+  document.title = pagetitle;
 
   return (
     <>
+      
       <GlobalStyle />
       <Box
         styleSheet={{
