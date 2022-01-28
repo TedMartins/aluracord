@@ -68,7 +68,7 @@ export function ButtonSendSticker(props) {
               justifyContent: 'space-between',
               flex: 1,
               paddingTop: '16px',
-              overflow: 'scroll',
+              overflow: 'auto',
             }}
           >
             {appConfig.stickers.map((sticker) => (
@@ -80,9 +80,10 @@ export function ButtonSendSticker(props) {
                 }}
                 tag="li" key={sticker}
                 styleSheet={{
-                  width: '50%',
+                  width: '80px',
+                  height: '80px',
                   borderRadius: '5px',
-                  padding: '10px',
+                  padding: '10px',                  
                   focus: {
                     backgroundColor: appConfig.theme.colors.neutrals[600],
                   },

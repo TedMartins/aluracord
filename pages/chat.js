@@ -5,6 +5,7 @@ import { Box, Text, TextField, Image, Button } from '@skynexui/components';
 import { useRouter } from 'next/router';
 import { createClient } from '@supabase/supabase-js';
 import { ButtonSendSticker } from '../src/components/ButtonSendSticker';
+import { BiSend } from 'react-icons/bi';
 
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzI1NjA2MSwiZXhwIjoxOTU4ODMyMDYxfQ.4W4lBwzVB0PFPwRVlB452Kt3vyhrkaz8PGy6j9nluL0';
 const SUPABASE_URL = 'https://ygmjsqdpcwjfcizxqpdh.supabase.co';
@@ -127,7 +128,7 @@ export default function ChatPage() {
                   handleNewMessage(message);
                 }
               }}
-              placeholder="Place your message here..."
+              placeholder="Digite sua mensagem aqui..."
               type="textarea"
               styleSheet={{
                 width: '100%',
@@ -138,6 +139,39 @@ export default function ChatPage() {
                 backgroundColor: appConfig.theme.colors.neutrals[800],
                 marginRight: '12px',
                 color: appConfig.theme.colors.neutrals[200],
+              }}
+            />
+            <Button
+              value={message}
+              onClick={(event) => {
+                event.preventDefault();
+                {message.length > 2
+                  ? handleNewMessage(message)
+                  : alert('Por favor, digite uma mensagem maior.');
+                }
+              }}
+              label={< BiSend />}
+              styleSheet={{
+                borderRadius: '50%',
+                padding: '3px',
+                minWidth: '50px',
+                minHeight: '50px',
+                fontSize: '25px',
+                fontWeight: '800',
+                marginBottom: '8px',
+                marginRight: '15px',
+                lineHeight: '0',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: appConfig.theme.colors.primary[400],
+                filter: 'opacity(100%);',
+                hover: {
+                  filter: 'opacity(75%);',
+                }              
+              }}
+              buttonColors={{
+                mainColorLight: appConfig.theme.colors.primary[400],
               }}
             />
             <ButtonSendSticker 
@@ -226,9 +260,16 @@ function MessageList(props) {
               {(new Date().toLocaleDateString())}
             </Text>
           </Box>
+
           {message.text.startsWith(':sticker:') 
           ? (
-            <Image src={message.text.replace(':sticker:', '')}/>
+            <Image 
+              src={message.text.replace(':sticker:', '')}
+              styleSheet={{
+                width: '125px',
+                height: '125px',
+              }}
+            />
           ) 
           : (
             message.text
