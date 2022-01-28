@@ -1,7 +1,7 @@
-import appConfig from '../config.json';
-import { Box, Button, Text, TextField, Image } from '@skynexui/components';
 import React from 'react';
+import appConfig from '../config.json';
 import Head from 'next/head';
+import { Box, Button, Text, TextField, Image } from '@skynexui/components';
 import { useRouter } from 'next/router';
 
 function Title(props) {
@@ -60,7 +60,7 @@ export default function HomePage() {
             as="form"
             onSubmit={(eventInfo) => {
               eventInfo.preventDefault();
-              router.push('/chat')
+              router.push(`/chat?username=${username}`);
             }}
             styleSheet={{
               display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',

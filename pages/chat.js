@@ -1,29 +1,58 @@
-import { Box, Text, TextField, Image, Button } from '@skynexui/components';
 import React from 'react';
 import appConfig from '../config.json';
+import Head from 'next/head';
+import { Box, Text, TextField, Image, Button } from '@skynexui/components';
+import { useRouter } from 'next/router';
 import { createClient } from '@supabase/supabase-js';
+import { ButtonSendSticker } from '../src/components/ButtonSendSticker';
 
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzI1NjA2MSwiZXhwIjoxOTU4ODMyMDYxfQ.4W4lBwzVB0PFPwRVlB452Kt3vyhrkaz8PGy6j9nluL0';
 const SUPABASE_URL = 'https://ygmjsqdpcwjfcizxqpdh.supabase.co';
 const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+function messageListener(addMessage) {
+  return supabaseClient
+  .from('messages')
+  .on('INSERT', (liveAnswer) => {
+    addMessage(liveAnswer.new);
+  })
+  .subscribe();
+}
+
 export default function ChatPage() {
+  const router = useRouter();
+  const signedUser = router.query.username;
   const [message, setMessage] = React.useState('');
   const [messageList, setMessageList] = React.useState([]);
+  const pagetitle = `AluraCord - ${signedUser}`;
 
   React.useEffect(() => {
     supabaseClient
       .from('messages')
       .select('*')
+      .order('id', { ascending: false })
       .then(({ data }) => {
         setMessageList(data);
       });
+
+      const subscription = messageListener((newMessage) => {
+        setMessageList((currentMessageList) => {
+          return [
+            newMessage,
+            ...currentMessageList,
+          ]
+        });
+      });
+
+      return () => {
+        subscription.unsubscribe();
+      }
+      
   }, []);
   
   function handleNewMessage(newMessage) {
     const message = {
-      //id: messageList.length - 1,
-      from: 'TedMartins',
+      from: signedUser,
       text: newMessage,
     };
     supabaseClient
@@ -32,10 +61,7 @@ export default function ChatPage() {
         message
       ])
       .then(({ data }) => {
-        setMessageList([
-          data[0],
-          ...messageList,
-        ]);
+        console.log(data);
       });
     
     setMessage('');
@@ -50,6 +76,10 @@ export default function ChatPage() {
         color: appConfig.theme.colors.neutrals['000']
       }}
     >
+      <Head>
+        <title>{pagetitle}</title>
+        <meta property="og:title" content="My page title" key="title" />
+      </Head>
       <Box
         styleSheet={{
           display: 'flex',
@@ -108,6 +138,11 @@ export default function ChatPage() {
                 backgroundColor: appConfig.theme.colors.neutrals[800],
                 marginRight: '12px',
                 color: appConfig.theme.colors.neutrals[200],
+              }}
+            />
+            <ButtonSendSticker 
+              onStickerClick={(sticker) => {
+                handleNewMessage(`:sticker: ${sticker}`);
               }}
             />
           </Box>
@@ -191,7 +226,13 @@ function MessageList(props) {
               {(new Date().toLocaleDateString())}
             </Text>
           </Box>
-          {message.text}
+          {message.text.startsWith(':sticker:') 
+          ? (
+            <Image src={message.text.replace(':sticker:', '')}/>
+          ) 
+          : (
+            message.text
+          )}
           </Text>
         );
       })}
