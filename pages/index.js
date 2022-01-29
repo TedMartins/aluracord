@@ -35,8 +35,8 @@ export default function HomePage() {
       <Box
         styleSheet={{
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          backgroundColor: appConfig.theme.colors.primary[500],
-          backgroundImage: 'url(https://virtualbackgrounds.site/wp-content/uploads/2020/08/the-matrix-digital-rain.jpg)',
+          backgroundColor: appConfig.theme.colors.neutrals[300],
+          backgroundImage: 'url(https://blogger.googleusercontent.com/img/a/AVvXsEj-y1jPy9mrx0l_Gi6ZFhCQLW6SYhVEHvrcrEnIxf6E9ZOHSca07SCD6yjNP62SHVu7sB-8XJbzChh7wpv1CyemXw7xMhfRYoRJ1azlS4Qm7UMi8yxiKJoWchbm9I0-JAPqQ9mYTkKyUMNrdM0TzzM8kCa4q7r4m0d-wXjpXxN37NyJLhlm4YmrM9PR=w640-h360)',
           backgroundRepeat: 'no-repeat', backgroundSize: 'cover', backgroundBlendMode: 'multiply',
         }}
       >

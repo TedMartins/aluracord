@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 import { createClient } from '@supabase/supabase-js';
 import { ButtonSendSticker } from '../src/components/ButtonSendSticker';
 import { BiSend } from 'react-icons/bi';
+import { RiDeleteBinLine } from 'react-icons/ri';
 
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzI1NjA2MSwiZXhwIjoxOTU4ODMyMDYxfQ.4W4lBwzVB0PFPwRVlB452Kt3vyhrkaz8PGy6j9nluL0';
 const SUPABASE_URL = 'https://ygmjsqdpcwjfcizxqpdh.supabase.co';
@@ -71,8 +72,8 @@ export default function ChatPage() {
     <Box
       styleSheet={{
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        backgroundColor: appConfig.theme.colors.primary[500],
-        backgroundImage: `url(https://virtualbackgrounds.site/wp-content/uploads/2020/08/the-matrix-digital-rain.jpg)`,
+        backgroundColor: appConfig.theme.colors.primary[300],
+        backgroundImage: `url(https://blogger.googleusercontent.com/img/a/AVvXsEj6m5cLeefcn5sHa-wQvznp0Il48drasAyrCGgt9JlyOByG909X84ZJ_dj7xUhemc5xaONeo25UylfuX8uHhQSvdgymqpwoUQgfbpb8cmd3UB5cxa3btYTCMgs3aHo1-G9JSE0In1g_0qlOJLpvEUqpJ0AM1CtU-UAjPF1WKEr8A28PY-yeR63ScEU_=s16000)`,
         backgroundRepeat: 'no-repeat', backgroundSize: 'cover', backgroundBlendMode: 'multiply',
         color: appConfig.theme.colors.neutrals['000']
       }}
@@ -92,7 +93,8 @@ export default function ChatPage() {
           height: '100%',
           maxWidth: '95%',
           maxHeight: '95vh',
-          padding: '32px',
+          padding: '32px',          
+          filter: 'opacity(93%)', 
         }}
       >
         <Header />
@@ -125,7 +127,10 @@ export default function ChatPage() {
               onKeyPress={(event) => {
                 if(event.key === 'Enter') {
                   event.preventDefault();
-                  handleNewMessage(message);
+                  {message.length > 2
+                    ? handleNewMessage(message)
+                    : alert('Por favor, digite uma mensagem maior.');
+                  }
                 }
               }}
               placeholder="Digite sua mensagem aqui..."
@@ -167,7 +172,7 @@ export default function ChatPage() {
                 backgroundColor: appConfig.theme.colors.primary[400],
                 filter: 'opacity(100%);',
                 hover: {
-                  filter: 'opacity(75%);',
+                  filter: 'opacity(75%)',
                 }              
               }}
               buttonColors={{
@@ -189,7 +194,14 @@ export default function ChatPage() {
 function Header() {
   return (
     <>
-      <Box styleSheet={{ width: '100%', marginBottom: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }} >
+      <Box styleSheet={{ 
+        width: '100%', 
+        marginBottom: '16px', 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'space-between', 
+      }} 
+      >
         <Text variant='heading5'>
           Chat
         </Text>
@@ -205,6 +217,10 @@ function Header() {
 }
 
 function MessageList(props) {
+  const router = useRouter();
+  const signedUser = router.query.username;
+  const [messageList, setMessageList] = React.useState([]);
+
   return (
     <Box
       tag="ul"
@@ -261,19 +277,52 @@ function MessageList(props) {
             </Text>
           </Box>
 
+          { signedUser === message.from
+            ?
+              <Box
+              title={'Deletar Mensagem'}
+              styleSheet={{
+                  padding: '0px 10px',
+                  position: 'float',
+                  float: 'right',
+                  cursor: 'pointer',
+              }}
+              onClick={()=>{      
+                let answer = confirm('Deseja remover essa mensagem?')
+                if(answer === true){
+                  supabaseClient
+                  .from('messages')
+                  .delete()
+                  .match({ id: message.id })
+                  .then(() => {
+                    let index = messageList.indexOf(message);
+                    messageList.splice(index,1)
+                    setMessageList([...messageList])
+                  })
+                }
+              }}
+              >
+                {<RiDeleteBinLine/>}
+              </Box>
+  
+            : 
+              null
+            }
+
           {message.text.startsWith(':sticker:') 
           ? (
             <Image 
               src={message.text.replace(':sticker:', '')}
               styleSheet={{
                 width: '125px',
-                height: '125px',
+                height: '125px', 
               }}
             />
           ) 
           : (
             message.text
           )}
+
           </Text>
         );
       })}
